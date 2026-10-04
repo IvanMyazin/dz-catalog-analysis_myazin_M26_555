@@ -24,7 +24,6 @@ movies = [
      "rating": 7.3, "duration_min": 129, "actors": ["P. Diaz", "T. Chalamet"]},
 ]
 # Этап 1. Разминка: переменные, числа, math
-
 def average_rating(movies: dict):
     rating_list = [x["rating"] for x in movies]
     avg_score = sum(rating_list) / len(rating_list)
@@ -43,9 +42,8 @@ def duration_in_hours(minutes):
     duration_hours = f"{minutes // 60}ч {minutes % 60}м"
     return duration_hours
 
+
 # Этап 2. Условия и match
-
-
 def rating_tier(rating):
     if rating >= 9:
         return "шедевр"
@@ -64,25 +62,28 @@ def decade_label(year):
             return "старые"
 
 # Этап 3. Циклы
-
 # вариант 1 (длинный)
-for x in movies:
-    if "comedy" not in x["genres"]:
-        print(x["title"])
-    else:
-        continue 
+def cicle_demo_for_var_1(movies):
+    for x in movies:
+        if "comedy" not in x["genres"]:
+            print(x["title"])
+        else:
+            continue 
+
+
 # вариант 2 (короче и понятнее)
-[print(x["title"]) for x in movies if "comedy" not in x["genres"] ]
+def cicle_demo_for_var_2(movies):
+    [print(x["title"]) for x in movies if "comedy" not in x["genres"] ]
 
 
-i = 0
-while i < len(movies):
-    if movies[i]["rating"] > 9:
-        print(f"Найден шедевр: {movies[i]["title"]}")
-    i += 1
-else:
-    "Шедевров не найдено"
-
+def cicle_demo_while_var(movies):
+    i = 0
+    while i < len(movies):
+        if movies[i]["rating"] > 9:
+            print(f"Найден шедевр: {movies[i]["title"]}")
+        i += 1
+    else:
+        "Шедевров не найдено"
 
 
 def count_long_movies(movies, threshold=120):
@@ -94,14 +95,12 @@ def count_long_movies(movies, threshold=120):
 
 
 # Этап 4. Строки
-
 def normalize_title(title):
     name_split = title.split(" ")
     upper_name = [x[0].upper() + x[1:] for x in name_split]
     joined_str = " ".join(upper_name)
     return joined_str
 
-print(normalize_title("silent hours"))
 
 def make_slug(title):
     name_split = title.split(" ")
@@ -109,7 +108,6 @@ def make_slug(title):
     joined_str = "-".join(lower_name)
     return joined_str
 
-print(make_slug("Silent Hours"))
 
 def format_report_line(movie):
     title = movie.get("title")
@@ -120,12 +118,8 @@ def format_report_line(movie):
     format_str = f"{normalize_title(title)} ({year}) - {rating}/10, {dur_in_hour}, жанры: {genres}" # noqa: E501
     return format_str
 
-[print(format_report_line(movie)) for movie in movies]
-
-
 
 # Этап 5. Списки
-
 def titles_sorted_by_rating(movies):
     # list_tuples = [(movie["rating"], movie["title"]) for movie in movies]
     # list_tuples_sorted = sorted(list_tuples, reverse=True)
@@ -134,14 +128,10 @@ def titles_sorted_by_rating(movies):
     list_sorted_titles = [(movie["title"], movie["rating"]) for movie in sorted_movies]
     return [list_sorted_titles, sorted_movies]
 
-print(titles_sorted_by_rating(movies)[0])
-
 
 def top_n_by_rating(movies, n=3):
     top = titles_sorted_by_rating(movies)
     return top[:n]
-
-print(top_n_by_rating(movies, n=3))
 
 
 # Этап 6. Словари
@@ -154,9 +144,6 @@ def count_by_genre(movies):
     return result
 
 
-print(count_by_genre(movies))
-
-
 def actor_filmography(movies):
     result = {}
     for movie in movies:
@@ -165,55 +152,43 @@ def actor_filmography(movies):
     return result
 
 
-print(actor_filmography(movies))
-
-
-avg = average_rating(movies)
-above_average = {
-    movie["title"]: movie["rating"] for movie in movies if movie["rating"] > avg
-}
-
-print(above_average)
+def dict_comprecation_demo(movies):
+    avg_rating = average_rating(movies)
+    return {
+        movie["title"]: movie["rating"] for movie in movies if movie["rating"] > avg_rating # noqa: E501
+    }
 
 
 # Этап 7. Множества
-
 def all_genres(movies):
     return {genre for movie in movies for genre in movie["genres"]}
 
-print(all_genres(movies))
 
 def common_actors(movie1, movie2):
     common_actors_set = set(movie1["actors"]) & set(movie2["actors"])
     return common_actors_set
-
-print(common_actors(movies[0], movies[3]))
 
 
 def genres_only_in_one(movies_a, movies_b):
     movies_a_genres = set(all_genres(movies_a)) - set(all_genres(movies_b))
     return movies_a_genres
 
-print(genres_only_in_one(movies[5:6], movies[:5]))
-
 
 # Этап 8. Итераторы и генераторы
-
 def iter_high_rated(movies, min_rating=8.0):
-    return (movie for movie in movies if movie["rating"] >= min_rating) # можно альтернативно через явный цикл и yield
+    # можно альтернативно через явный цикл и yield 
+    return (movie for movie in movies if movie["rating"] >= min_rating) # noqa: E501 
 
 
-for movie in iter_high_rated(movies):
-    print(format_report_line(movie))
+# for movie in iter_high_rated(movies):
+#     print(format_report_line(movie))
 
 
-print(sum((m["duration_min"] for m in movies if m["rating"] > 7)))   # 713 
-
-
+# print(sum((m["duration_min"] for m in movies if m["rating"] > 7)))   # 713 
 # Этап 9. Итоговый отчет
 
 def build_report(movies):
-    print(f"ОТЧЕТ ПО КАТАЛОГУ")
+    print("ОТЧЕТ ПО КАТАЛОГУ")
     print(f"Средний рейтинг: {average_rating(movies)}")
     print(f"Средний возраст фильмов: {catalog_age_stats(movies)[2]} лет \n\n")
     print("ТОП-3 фильма:")
@@ -223,8 +198,20 @@ def build_report(movies):
     for genre, count in count_by_genre(movies).items():
         print(f"\t{genre}: {count}")
     print(f"Все жанры каталога: {", ".join(all_genres(movies))}")
-build_report(movies)
                                              
-
 if __name__ == '__main__':
+
+    # print(normalize_title("silent hours"))
+    # print(make_slug("Silent Hours"))
+    # [print(format_report_line(movie)) for movie in movies]
+    # print(titles_sorted_by_rating(movies)[0])
+    # print(top_n_by_rating(movies, n=3))
+    # print(count_by_genre(movies))
+    # print(actor_filmography(movies))
+    # print(dict_comprecation_demo(movies))
+    # print(all_genres(movies))
+    # print(common_actors(movies[0], movies[3]))
+    # print(genres_only_in_one(movies[5:6], movies[:5]))
+
     build_report(movies)
+
