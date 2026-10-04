@@ -23,7 +23,7 @@ movies = [
     {"title": "Red Harbor", "year": 2018, "genres": {"action", "thriller"},
      "rating": 7.3, "duration_min": 129, "actors": ["P. Diaz", "T. Chalamet"]},
 ]
-# Этап 1
+# Этап 1. Разминка: переменные, числа, math
 
 def average_rating(movies: dict):
     rating_list = [x["rating"] for x in movies]
@@ -43,7 +43,7 @@ def duration_in_hours(minutes):
     duration_hours = f"{minutes // 60}ч {minutes % 60}м"
     return duration_hours
 
-# Этап 2
+# Этап 2. Условия и match
 
 
 def rating_tier(rating):
@@ -63,7 +63,8 @@ def decade_label(year):
         case _:
             return "старые"
 
-# Этап 3
+# Этап 3. Циклы
+
 # вариант 1 (длинный)
 for x in movies:
     if "comedy" not in x["genres"]:
@@ -92,7 +93,7 @@ def count_long_movies(movies, threshold=120):
     return counter
 
 
-# Этап 4
+# Этап 4. Строки
 
 def normalize_title(title):
     name_split = title.split(" ")
@@ -123,9 +124,107 @@ def format_report_line(movie):
 
 
 
-# Этап 5
+# Этап 5. Списки
+
+def titles_sorted_by_rating(movies):
+    # list_tuples = [(movie["rating"], movie["title"]) for movie in movies]
+    # list_tuples_sorted = sorted(list_tuples, reverse=True)
+    # titles = [title for rating, title in list_tuples_sorted]
+    sorted_movies = sorted(movies, key=lambda movie: movie["rating"], reverse=True)
+    list_sorted_titles = [(movie["title"], movie["rating"]) for movie in sorted_movies]
+    return [list_sorted_titles, sorted_movies]
+
+print(titles_sorted_by_rating(movies)[0])
 
 
+def top_n_by_rating(movies, n=3):
+    top = titles_sorted_by_rating(movies)
+    return top[:n]
+
+print(top_n_by_rating(movies, n=3))
 
 
-# if __name__ == '__main__':
+# Этап 6. Словари
+
+def count_by_genre(movies):
+    result = {}
+    for movie in movies:
+        for genre in movie["genres"]:
+            result[genre] = result.get(genre, 0) + 1
+    return result
+
+
+print(count_by_genre(movies))
+
+
+def actor_filmography(movies):
+    result = {}
+    for movie in movies:
+        for actor in movie["actors"]:
+            result[actor] = result.get(actor, []) + [movie["title"]]
+    return result
+
+
+print(actor_filmography(movies))
+
+
+avg = average_rating(movies)
+above_average = {
+    movie["title"]: movie["rating"] for movie in movies if movie["rating"] > avg
+}
+
+print(above_average)
+
+
+# Этап 7. Множества
+
+def all_genres(movies):
+    return {genre for movie in movies for genre in movie["genres"]}
+
+print(all_genres(movies))
+
+def common_actors(movie1, movie2):
+    common_actors_set = set(movie1["actors"]) & set(movie2["actors"])
+    return common_actors_set
+
+print(common_actors(movies[0], movies[3]))
+
+
+def genres_only_in_one(movies_a, movies_b):
+    movies_a_genres = set(all_genres(movies_a)) - set(all_genres(movies_b))
+    return movies_a_genres
+
+print(genres_only_in_one(movies[5:6], movies[:5]))
+
+
+# Этап 8. Итераторы и генераторы
+
+def iter_high_rated(movies, min_rating=8.0):
+    return (movie for movie in movies if movie["rating"] >= min_rating) # можно альтернативно через явный цикл и yield
+
+
+for movie in iter_high_rated(movies):
+    print(format_report_line(movie))
+
+
+print(sum((m["duration_min"] for m in movies if m["rating"] > 7)))   # 713 
+
+
+# Этап 9. Итоговый отчет
+
+def build_report(movies):
+    print(f"ОТЧЕТ ПО КАТАЛОГУ")
+    print(f"Средний рейтинг: {average_rating(movies)}")
+    print(f"Средний возраст фильмов: {catalog_age_stats(movies)[2]} лет \n\n")
+    print("ТОП-3 фильма:")
+    for movie in titles_sorted_by_rating(movies)[1][0:3]:
+        print(f"{format_report_line(movie)}")
+    print("\n\nФильмов по жанрам:\n")
+    for genre, count in count_by_genre(movies).items():
+        print(f"\t{genre}: {count}")
+    print(f"Все жанры каталога: {", ".join(all_genres(movies))}")
+build_report(movies)
+                                             
+
+if __name__ == '__main__':
+    build_report(movies)
